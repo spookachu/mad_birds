@@ -11,6 +11,7 @@ public class MinigameBoundary : MonoBehaviour
     public GameObject anchor;
     private Vector3 anchorPosition;
     private Quaternion anchorRotation;
+    private bool isInMinigame = false;
 
     private void Start()
     {
@@ -24,8 +25,14 @@ public class MinigameBoundary : MonoBehaviour
         anchorRotation = anchor.transform.rotation;
     }
 
+    /// <summary>
+    /// Allows to quit minigame and reset when pressing Q
+    /// </summary>
     private void Update()
     {
+        if (isInMinigame && Input.GetKeyDown(KeyCode.Q)){
+        EndMinigame();
+    }
     }
 
     // This method triggers when the player's collider enters the boundary collider
@@ -40,12 +47,17 @@ public class MinigameBoundary : MonoBehaviour
 
     private void StartMinigame()
     {
+        isInMinigame = true;
         Camera.main.transform.position = anchorPosition;
         Camera.main.transform.rotation = anchorRotation;
+        cameraMovementScript.enabled = false;
+    }
 
-        if (cameraMovementScript != null){
-            cameraMovementScript.enabled = false;
-        }
+    private void EndMinigame()
+    {
+        isInMinigame = false;
+        ResetCamera();
+        cameraMovementScript.enabled = true;
     }
 
     private void ResetCamera()
