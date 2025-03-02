@@ -11,11 +11,20 @@ public class LifeManager : MonoBehaviour
     private GameObject[] lifeIcons;
     public Text statusText;
     
+    /// <summary>
+    /// Called when the script is first initialized. It calls the 
+    // ResetLives() function to initialize and display the life count
+    // at the start of the game.
+    /// </summary>
     void Start()
     {
         ResetLives();
     }
 
+    /// <summary>
+    /// Creates the life count and the in-game visual objects to indicate
+    /// the amount of lives left.
+    /// </summary>
     private void ResetLives()
     {
         currentLives = totalLives;
@@ -41,6 +50,11 @@ public class LifeManager : MonoBehaviour
         statusText.text = ""; 
     }
 
+    /// <summary>
+    /// Reduces the number of remaining lives by 1 and destroyes a 
+    //  life icon, checks if the player has lost all lives, in which 
+    //  case it triggers the GameOver() function.
+    /// </summary>
     public void UseLife()
     {
         if (currentLives > 0)
@@ -54,18 +68,29 @@ public class LifeManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates game screen to announce win.
+    /// </summary>
     public void WinGame()
     {
         statusText.text = "You Win! Power-Up Earned!";
         //ResetLives();
     }
 
+    /// <summary>
+    /// Updates game screen to announce loss.
+    /// </summary>
     public void GameOver()
     {
         statusText.text = "Game Over!";
         //ResetLives();
     }
 
+
+    /// <summary>
+    /// Resets the game by restoring the lives and life icons, 
+    // and updates the status text 
+    /// </summary>
      public void RestartGame()
     {
         ResetLives();
