@@ -55,4 +55,12 @@ public class PowerUpManager : MonoBehaviour
             powerUps[type]--;
         }
     }
+
+    /// <summary>
+    //  Prevent power ups from being used from one game to another.
+    /// </summary>
+    public void ResetPowerUps()
+    {
+        powerUps = new Dictionary<PowerUpType, int>();;
+    }
 }
