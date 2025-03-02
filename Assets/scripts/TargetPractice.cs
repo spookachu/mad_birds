@@ -8,6 +8,7 @@ public class TargetPractice : Projectile
     public GameObject groundObject;
     private bool isOnGround = false;
     public GameObject Target1, Target2, Target3;
+    public LifeManager livesManager;
     
     //Effects
     public GameObject confettiEffect;
@@ -16,7 +17,7 @@ public class TargetPractice : Projectile
     public override void Update()
     {
         if (isThrown)
-        {
+        {   
             timeAfterLaunch += Time.deltaTime;
             if (isOnGround || timeAfterLaunch > 3f)
             {
@@ -54,6 +55,7 @@ public class TargetPractice : Projectile
 
     IEnumerator TriggerEffect(GameObject effectPrefab)
     {
+        livesManager.UseLife();
         if (effectPrefab != null)
         {
             GameObject effectInstance = Instantiate(effectPrefab, transform.position, Quaternion.identity);
@@ -65,7 +67,17 @@ public class TargetPractice : Projectile
                 Destroy(effectInstance);
             }
         }
-        ResetProjectile();
+        if (livesManager.currentLives > 0){
+            ResetProjectile();
+         }
+        else{
+            base.BlockProjectile();
+            livesManager.GameOver();
+
+            // check if user wants to go again
+            RestartGame();
+            ResetProjectile();
+        }
     }
 
     void CheckWinCondition()
@@ -74,6 +86,7 @@ public class TargetPractice : Projectile
         {
             Debug.Log("TargetPractice Won! Power-Up Earned.");
             PowerUpManager.Instance?.EarnPowerUp(PowerUpType.SizeIncrease);
+            livesManager.WinGame();
         }
     }
 

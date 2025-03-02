@@ -19,6 +19,8 @@ public class Explode : Projectile
     private bool isLaunched = false;
     private float timeAfterLaunch = 0f;
     public Text countdownText;
+    public LifeManager livesManager;
+    public PowerUpManager PowerUpManager;
 
     void Update()
     {
@@ -118,6 +120,7 @@ public class Explode : Projectile
         {
             isLaunched = true;
             base.OnMouseUp();
+            livesManager.UseLife();
         }
     }
 
@@ -143,7 +146,19 @@ public class Explode : Projectile
         }
 
         CheckWinCondition();
-        ResetProjectile();
+        if (livesManager.currentLives >= 0){
+            ResetProjectile();
+        }
+        else{
+            base.BlockProjectile();
+            livesManager.GameOver();
+
+            // check if user wants to go again
+            bool restart = RestartGame();
+            if(restart == true){
+                Start();
+            }
+        }
     }
 
     /// <summary>
@@ -156,6 +171,7 @@ public class Explode : Projectile
             Debug.Log("Congrats, you've won BombsAway! Power-Up Earned :)");
             PowerUpManager.Instance.EarnPowerUp(PowerUpType.Explosion);
             RespawnBoxes();
+            livesManager.WinGame();
         }
     }
 

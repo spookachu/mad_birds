@@ -9,8 +9,7 @@ public class Projectile : MonoBehaviour
 {
     public Rigidbody rb;
     public bool isThrown = false;
-    public float launchForce = 10f;
-    
+    public float launchForce = 10f;    
     public Vector3 startPoint;
     public Vector3 originalPosition;
     public Quaternion originalRotation;
@@ -60,7 +59,7 @@ public class Projectile : MonoBehaviour
             isDragging = false;
             rb.isKinematic = false;
             Launch(dragDirection * launchForce);
-            trajectoryLine.positionCount = 0;
+            trajectoryLine.positionCount = 0;;
         }
     }
 
@@ -107,6 +106,14 @@ public class Projectile : MonoBehaviour
     }
 
     /// <summary>
+    /// Blocks the projectile from being thrown if game was lost.
+    /// </summary>
+    public virtual void BlockProjectile()
+    {
+        Destroy(gameObject);
+    }
+
+    /// <summary>
     /// Triggers the puff effect and resets the projectile.
     /// </summary>
     public IEnumerator DisappearWithPuff()
@@ -128,5 +135,15 @@ public class Projectile : MonoBehaviour
             }
         }
         ResetProjectile();
+    }
+
+    public bool RestartGame()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+            {
+                ResetProjectile(); 
+                return true;
+            }
+        return false;
     }
 }
