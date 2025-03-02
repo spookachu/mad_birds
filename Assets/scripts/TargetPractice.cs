@@ -9,6 +9,8 @@ public class TargetPractice : Projectile
     private bool isOnGround = false;
     public GameObject Target1, Target2, Target3;
     public LifeManager livesManager;
+    public PowerUpManager PowerUpManager;
+
     
     //Effects
     public GameObject confettiEffect;
@@ -68,15 +70,15 @@ public class TargetPractice : Projectile
             }
         }
         if (livesManager.currentLives > 0){
-            ResetProjectile();
+            base.ResetProjectile();
          }
         else{
-            base.BlockProjectile();
             livesManager.GameOver();
 
             // check if user wants to go again
-            RestartGame();
-            ResetProjectile();
+            livesManager.RestartGame();
+            livesManager.totalLives = 3;
+            base.ResetProjectile();
         }
     }
 
@@ -87,6 +89,10 @@ public class TargetPractice : Projectile
             Debug.Log("TargetPractice Won! Power-Up Earned.");
             PowerUpManager.Instance?.EarnPowerUp(PowerUpType.SizeIncrease);
             livesManager.WinGame();
+
+            //reset
+            base.ResetProjectile();
+            livesManager.totalLives = 3;
         }
     }
 

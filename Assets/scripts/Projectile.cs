@@ -110,7 +110,7 @@ public class Projectile : MonoBehaviour
     /// </summary>
     public virtual void BlockProjectile()
     {
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 
     /// <summary>
