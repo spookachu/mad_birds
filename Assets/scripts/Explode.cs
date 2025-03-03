@@ -150,7 +150,6 @@ public class Explode : Projectile
             ResetProjectile();
         }
         else{
-            base.BlockProjectile();
             livesManager.GameOver();
 
             // check if user wants to go again
