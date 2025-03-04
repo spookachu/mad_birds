@@ -101,7 +101,7 @@ public class Explode : Projectile
         }
 
         if (countdownText != null){
-            countdownText.text = "";  // Clear text 
+            countdownText.text = "";  // Clear UI 
         }
 
         // blast with a bigger radius and force
@@ -160,7 +160,7 @@ public class Explode : Projectile
             boxes.Remove(box);
         }
 
-        CheckWinCondition();
+        CheckWinCondition();  // verify if all objects have been destroyed
         if (livesManager.currentLives > 0){
             ResetProjectile();
         }
