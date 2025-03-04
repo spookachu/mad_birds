@@ -10,7 +10,7 @@ public class CameraMovement : MonoBehaviour
     /// </summary>
     void Update()
     {
-        HandleMovement();
+        //HandleMovement();
         HandleRotation();
     }
 

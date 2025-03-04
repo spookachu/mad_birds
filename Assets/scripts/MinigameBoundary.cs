@@ -4,9 +4,14 @@ public class MinigameBoundary : MonoBehaviour
 {
     public Vector3 originalCameraPosition;
     public Quaternion originalCameraRotation;
+    public Vector3 originalPlayerPosition;
+    public Quaternion originalPlayerRotation;
 
     private CameraMovement cameraMovementScript;
+    private FirstPersonLook cameraRotationScript;
+    private PlayerMovement playerMovementScript;
     private GameObject player;
+    private GameObject playerParent;
     private GameObject boundary;
     public GameObject anchor;
     private Vector3 anchorPosition;
@@ -19,10 +24,16 @@ public class MinigameBoundary : MonoBehaviour
         originalCameraRotation = Camera.main.transform.rotation;
 
         cameraMovementScript = Camera.main.GetComponent<CameraMovement>();
-        player = GameObject.FindGameObjectWithTag("Player");
-
+        cameraRotationScript = Camera.main.GetComponent<FirstPersonLook>();
+        playerParent = GameObject.FindGameObjectWithTag("Player");
+        playerMovementScript = playerParent.GetComponent<PlayerMovement>();
+        player = GameObject.FindGameObjectWithTag("PlayerSkin");
+        
         anchorPosition = anchor.transform.position;
         anchorRotation = anchor.transform.rotation;
+
+        originalPlayerPosition = player.transform.position;
+        originalPlayerRotation = player.transform.rotation;
     }
 
     /// <summary>
@@ -51,18 +62,27 @@ public class MinigameBoundary : MonoBehaviour
         Camera.main.transform.position = anchorPosition;
         Camera.main.transform.rotation = anchorRotation;
         cameraMovementScript.enabled = false;
+        cameraRotationScript.enabled = false;
+        playerMovementScript.enabled = false;
     }
 
     private void EndMinigame()
     {
         isInMinigame = false;
-        ResetCamera();
+        Reset();
         cameraMovementScript.enabled = true;
+        cameraRotationScript.enabled = true;
+        playerMovementScript.enabled = true;
     }
 
-    private void ResetCamera()
+    private void Reset()
     {
+        // Reset Camera to the original position and rotation
         Camera.main.transform.position = originalCameraPosition;
         Camera.main.transform.rotation = originalCameraRotation;
+
+        // Reset the player to the original position and rotation
+        playerParent.transform.position = originalPlayerPosition; 
+        playerParent.transform.rotation = originalPlayerRotation; 
     }
 }

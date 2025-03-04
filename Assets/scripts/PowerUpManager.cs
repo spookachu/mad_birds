@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public enum PowerUpType {SizeIncrease, Explosion}
+public enum PowerUpType {SizeIncrease, Blast}
 
 /// <summary>
 /// Base class for power ups management
