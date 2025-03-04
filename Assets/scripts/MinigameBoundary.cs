@@ -1,41 +1,39 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; 
-using CameraFading;
 
 public class MinigameBoundary : MonoBehaviour
 {
-    public GameObject camera;
-    private Vector3 originalCameraPosition;
-    private Quaternion originalCameraRotation;
+    public Vector3 originalCameraPosition;
+    public Quaternion originalCameraRotation;
+    public Vector3 originalPlayerPosition;
+    public Quaternion originalPlayerRotation;
 
-    private FirstPersonLook cameraMovementScript;
+    private CameraMovement cameraMovementScript;
+    private FirstPersonLook cameraRotationScript;
+    private PlayerMovement playerMovementScript;
+    private GameObject player;
+    private GameObject playerParent;
     private GameObject boundary;
     public GameObject anchor;
     private Vector3 anchorPosition;
     private Quaternion anchorRotation;
     private bool isInMinigame = false;
 
-    // player settings
-    private GameObject player;
-    private Rigidbody playerRigidbody;
-    private PlayerMovement playerMovement;
-    private Vector3 originalPosition;
-    private Quaternion originalRotation;
-
     private void Start()
     {
         originalCameraPosition = Camera.main.transform.position;
         originalCameraRotation = Camera.main.transform.rotation;
-        cameraMovementScript = camera.GetComponent<FirstPersonLook>();
+
+        cameraMovementScript = Camera.main.GetComponent<CameraMovement>();
+        cameraRotationScript = Camera.main.GetComponent<FirstPersonLook>();
+        playerParent = GameObject.FindGameObjectWithTag("Player");
+        playerMovementScript = playerParent.GetComponent<PlayerMovement>();
+        player = GameObject.FindGameObjectWithTag("PlayerSkin");
+        
         anchorPosition = anchor.transform.position;
         anchorRotation = anchor.transform.rotation;
 
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerRigidbody = player.GetComponent<Rigidbody>();
-        Transform meshTransform = player.transform.Find("Capsule Mesh");
-        playerMovement = player.GetComponent<PlayerMovement>();
-        originalPosition = meshTransform.transform.position;
-        originalRotation = meshTransform.transform.rotation;
+        originalPlayerPosition = player.transform.position;
+        originalPlayerRotation = player.transform.rotation;
     }
 
     /// <summary>
@@ -44,13 +42,8 @@ public class MinigameBoundary : MonoBehaviour
     private void Update()
     {
         if (isInMinigame && Input.GetKeyDown(KeyCode.Q)){
-            EndMinigame();
+        EndMinigame();
     }
-        // Restart the scene to reset everything
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
     }
 
     // This method triggers when the player's collider enters the boundary collider
@@ -59,7 +52,6 @@ public class MinigameBoundary : MonoBehaviour
         if (other.CompareTag("Player")) 
         {
             Debug.Log("Player entered the boundary, starting mini-game.");
-            CameraFade.Out();
             StartMinigame();
         }
     }
@@ -67,29 +59,45 @@ public class MinigameBoundary : MonoBehaviour
     private void StartMinigame()
     {
         isInMinigame = true;
-        camera.transform.position = anchor.transform.position;
-        camera.transform.rotation = anchor.transform.rotation;
-
-        playerMovement.EnableMovement(false);
+        Camera.main.transform.position = anchorPosition;
+        Camera.main.transform.rotation = anchorRotation;
         cameraMovementScript.enabled = false;
-        CameraFade.In();
+        cameraRotationScript.enabled = false;
+        playerMovementScript.enabled = false;
     }
 
     private void EndMinigame()
     {
         isInMinigame = false;
-        
-        player.transform.position = originalPosition;
-        player.transform.rotation = originalRotation;
-
-        ResetCamera();
+        Reset();
         cameraMovementScript.enabled = true;
-        playerMovement.EnableMovement(true);
+        cameraRotationScript.enabled = true;
+        playerMovementScript.enabled = true;
     }
 
-    private void ResetCamera()
+    private void Reset()
     {
-        camera.transform.position = player.transform.position + (originalCameraPosition - originalPosition);
-        camera.transform.rotation = originalCameraRotation;
+        // Disable the movement scripts temporarily
+        cameraMovementScript.enabled = false;  
+        cameraRotationScript.enabled = false;
+        playerMovementScript.enabled = false;
+
+        // Reset player & camera position and rotation
+        playerParent.transform.position = originalPlayerPosition;
+        playerParent.transform.rotation = originalPlayerRotation;
+        Camera.main.transform.position = originalCameraPosition;
+        Camera.main.transform.rotation = originalCameraRotation;
+
+        // Reset rotation values to prevent player-camer offset
+        cameraRotationScript.velocity = Vector2.zero; 
+        cameraRotationScript.frameVelocity = Vector2.zero;
+
+        cameraMovementScript.enabled = true;  
+        cameraRotationScript.enabled = true; 
+        playerMovementScript.enabled = true;
     }
+
+
+
+
 }

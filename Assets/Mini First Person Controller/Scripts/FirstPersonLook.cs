@@ -7,15 +7,19 @@ public class FirstPersonLook : MonoBehaviour
     public float sensitivity = 2;
     public float smoothing = 1.5f;
 
-    Vector2 velocity;
-    Vector2 frameVelocity;
+    public Vector2 velocity;
+    public Vector2 frameVelocity;
 
 
     void Reset()
     {
-        // Get the character from the FirstPersonMovement in parents.
-        character = GetComponentInParent<FirstPersonMovement>().transform;
+        // Reset the camera rotation to ensure no residual rotation
+        velocity = Vector2.zero; // Reset the velocity to stop any lingering mouse input
+        transform.localRotation = Quaternion.identity; // Reset the camera's local rotation (pitch)
+
+        character.localRotation = Quaternion.identity; // Reset character rotation (yaw)
     }
+
 
     void Start()
     {
