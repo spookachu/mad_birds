@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public enum PowerUpType {SizeIncrease, Explosion}
+public enum PowerUpType {SizeIncrease, Blast}
 
 /// <summary>
 /// Base class for power ups management
@@ -12,7 +12,7 @@ public enum PowerUpType {SizeIncrease, Explosion}
 //
 // Power ups available:
 // - Bullseye minigame: projectile becomes bigger (SizeIncrease)
-// - BombsAway minigame: projectile explodes in a strong blast (Explosion)
+// - BombsAway minigame: projectile explodes in a strong blast (Blast)
 /// </summary>
 public class PowerUpManager : MonoBehaviour
 {
