@@ -3,7 +3,7 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     public float moveSpeed = 5f; 
-    public float rotationSpeed = 2f; 
+    public float rotationSpeed = 2f;
 
     /// <summary>
     /// Handles camera movement and rotation based on user input.
@@ -15,12 +15,12 @@ public class CameraMovement : MonoBehaviour
     }
 
     /// <summary>
-    /// Moves the camera based on player input (WASD for movement or arrow keys for camera orientations).
+    /// Moves the camera based on player input (WASD or Arrow Keys).
     /// </summary>
     void HandleMovement()
     {
-        float horizontal = Input.GetAxis("Horizontal"); 
-        float vertical = Input.GetAxis("Vertical");
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical"); 
 
         Vector3 forward = transform.forward;
         forward.y = 0f;

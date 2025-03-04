@@ -103,14 +103,9 @@ public class Projectile : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
         rb.isKinematic = true;
         isThrown = false;
-    }
 
-    /// <summary>
-    /// Blocks the projectile from being thrown if game was lost.
-    /// </summary>
-    public virtual void BlockProjectile()
-    {
-        //Destroy(gameObject);
+        originalPosition = transform.position;
+        originalRotation = transform.rotation;
     }
 
     /// <summary>

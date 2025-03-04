@@ -1,29 +1,41 @@
 using UnityEngine;
 using UnityEngine.SceneManagement; 
+using CameraFading;
 
 public class MinigameBoundary : MonoBehaviour
 {
-    public Vector3 originalCameraPosition;
-    public Quaternion originalCameraRotation;
+    public GameObject camera;
+    private Vector3 originalCameraPosition;
+    private Quaternion originalCameraRotation;
 
-    private CameraMovement cameraMovementScript;
-    private GameObject player;
+    private FirstPersonLook cameraMovementScript;
     private GameObject boundary;
     public GameObject anchor;
     private Vector3 anchorPosition;
     private Quaternion anchorRotation;
     private bool isInMinigame = false;
 
+    // player settings
+    private GameObject player;
+    private Rigidbody playerRigidbody;
+    private PlayerMovement playerMovement;
+    private Vector3 originalPosition;
+    private Quaternion originalRotation;
+
     private void Start()
     {
         originalCameraPosition = Camera.main.transform.position;
         originalCameraRotation = Camera.main.transform.rotation;
-
-        cameraMovementScript = Camera.main.GetComponent<CameraMovement>();
-        player = GameObject.FindGameObjectWithTag("Player");
-
+        cameraMovementScript = camera.GetComponent<FirstPersonLook>();
         anchorPosition = anchor.transform.position;
         anchorRotation = anchor.transform.rotation;
+
+        player = GameObject.FindGameObjectWithTag("Player");
+        playerRigidbody = player.GetComponent<Rigidbody>();
+        Transform meshTransform = player.transform.Find("Capsule Mesh");
+        playerMovement = player.GetComponent<PlayerMovement>();
+        originalPosition = meshTransform.transform.position;
+        originalRotation = meshTransform.transform.rotation;
     }
 
     /// <summary>
@@ -32,7 +44,7 @@ public class MinigameBoundary : MonoBehaviour
     private void Update()
     {
         if (isInMinigame && Input.GetKeyDown(KeyCode.Q)){
-        EndMinigame();
+            EndMinigame();
     }
         // Restart the scene to reset everything
         if (Input.GetKeyDown(KeyCode.R))
@@ -47,6 +59,7 @@ public class MinigameBoundary : MonoBehaviour
         if (other.CompareTag("Player")) 
         {
             Debug.Log("Player entered the boundary, starting mini-game.");
+            CameraFade.Out();
             StartMinigame();
         }
     }
@@ -54,21 +67,29 @@ public class MinigameBoundary : MonoBehaviour
     private void StartMinigame()
     {
         isInMinigame = true;
-        Camera.main.transform.position = anchorPosition;
-        Camera.main.transform.rotation = anchorRotation;
+        camera.transform.position = anchor.transform.position;
+        camera.transform.rotation = anchor.transform.rotation;
+
+        playerMovement.EnableMovement(false);
         cameraMovementScript.enabled = false;
+        CameraFade.In();
     }
 
     private void EndMinigame()
     {
         isInMinigame = false;
+        
+        player.transform.position = originalPosition;
+        player.transform.rotation = originalRotation;
+
         ResetCamera();
         cameraMovementScript.enabled = true;
+        playerMovement.EnableMovement(true);
     }
 
     private void ResetCamera()
     {
-        Camera.main.transform.position = originalCameraPosition;
-        Camera.main.transform.rotation = originalCameraRotation;
+        camera.transform.position = player.transform.position + (originalCameraPosition - originalPosition);
+        camera.transform.rotation = originalCameraRotation;
     }
 }

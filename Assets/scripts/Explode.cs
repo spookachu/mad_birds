@@ -219,7 +219,6 @@ public class Explode : Projectile
         }
     }
 
-    // RESETING -----------------------------------
     /// <summary>
     /// Recreate boxes at their original positions
     /// </summary>

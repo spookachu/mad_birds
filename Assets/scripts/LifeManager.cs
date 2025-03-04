@@ -73,7 +73,9 @@ public class LifeManager : MonoBehaviour
     /// </summary>
     public void WinGame()
     {
-        statusText.text = "You Win! Power-Up Earned!";
+        currentLives = 3;
+        statusText.text = "Success!";
+        statusText.text = "";
         //ResetLives();
     }
 
@@ -85,7 +87,6 @@ public class LifeManager : MonoBehaviour
         statusText.text = "Game Over!";
         //ResetLives();
     }
-
 
     /// <summary>
     /// Resets the game by restoring the lives and life icons, 
