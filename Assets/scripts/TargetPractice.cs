@@ -7,17 +7,21 @@ public class TargetPractice : Projectile
     private float timeAfterLaunch = 0f;
     public GameObject groundObject;
     private bool isOnGround = false;
-    public GameObject Target1, Target2, Target3;
+    private GameObject[] targets;
     public LifeManager livesManager;
     public PowerUpManager PowerUpManager;
 
     
-    //Effects
+    //Effects & levels
     public GameObject confettiEffect;
     private bool isSizeDoubled = false; 
+    public GameObject level1Set;
+    public GameObject level2Set;
 
     public override void Update()
     {
+        targets = GameObject.FindGameObjectsWithTag("Target");
+
         if (isThrown)
         {   
             timeAfterLaunch += Time.deltaTime;
@@ -26,6 +30,7 @@ public class TargetPractice : Projectile
                 StartCoroutine(DisappearWithPuff());
                 isThrown = false;
                 timeAfterLaunch = 0f;
+                livesManager.UseLife();
             }
 
             if (PowerUpManager.Instance.HasPowerUp(PowerUpType.SizeIncrease) && Input.GetKeyDown(KeyCode.Space) && !isSizeDoubled){
@@ -42,22 +47,17 @@ public class TargetPractice : Projectile
             StartCoroutine(DisappearWithPuff()); 
         }
 
-        if (collision.gameObject == Target1 || collision.gameObject == Target2 || collision.gameObject == Target3)
+        if (collision.gameObject.CompareTag("Target"))
         {
             StartCoroutine(TriggerEffect(confettiEffect));
-
-            if (collision.gameObject == Target1) Target1 = null;
-            if (collision.gameObject == Target2) Target2 = null;
-            if (collision.gameObject == Target3) Target3 = null;
-
+            collision.gameObject.SetActive(false);
             CheckWinCondition();
-            return;
         }
     }
 
     IEnumerator TriggerEffect(GameObject effectPrefab)
     {
-        livesManager.UseLife();
+        
         if (effectPrefab != null)
         {
             GameObject effectInstance = Instantiate(effectPrefab, transform.position, Quaternion.identity);
@@ -77,25 +77,38 @@ public class TargetPractice : Projectile
 
             // check if user wants to go again
             livesManager.RestartGame();
-            livesManager.totalLives = 3;
             base.ResetProjectile();
+            foreach (GameObject target in targets)
+            {
+                target.SetActive(true);
+            }
         }
     }
 
     void CheckWinCondition()
     {
-        if (Target1 == null && Target2 == null && Target3 == null)
+        foreach (GameObject target in targets)
         {
-            Debug.Log("TargetPractice Won! Power-Up Earned.");
-            PowerUpManager.Instance?.EarnPowerUp(PowerUpType.SizeIncrease);
-            livesManager.WinGame();
-
-            //reset
-            base.ResetProjectile();
-            livesManager.totalLives = 3;
+            if (target.activeSelf) return;
         }
+        Debug.Log("TargetPractice Won! Power-Up Earned.");
+        PowerUpManager.Instance?.EarnPowerUp(PowerUpType.SizeIncrease);
+        livesManager.WinGame();
+
+        //reset
+        GameReset();
     }
 
+    void GameReset()
+    {
+        base.ResetProjectile();
+        livesManager.totalLives = 3;
+
+        // move to next level
+        level1Set.SetActive(false);
+        level2Set.SetActive(true); 
+    }
+   
     void DoubleProjectileSize()
     {
         projectile.transform.localScale = new Vector3(1.2f, 1.2f, 1.2f); 
