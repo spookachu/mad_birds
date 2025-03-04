@@ -21,6 +21,9 @@ public class Explode : Projectile
     public Text countdownText;
     public LifeManager livesManager;
     public PowerUpManager PowerUpManager;
+    public GameObject level1Set;
+    public GameObject level2Set;
+    private bool lastLevel;
 
     void Update()
     {
@@ -29,7 +32,7 @@ public class Explode : Projectile
         }
 
         // Trigger powerup if you have any
-        if (isLaunched && !explosionActivated && Input.GetKeyDown(KeyCode.Space))
+        if (!explosionActivated && Input.GetKeyDown(KeyCode.Space))
         {
             if (PowerUpManager.Instance.HasPowerUp(PowerUpType.Explosion))
             {
@@ -42,13 +45,10 @@ public class Explode : Projectile
     public override void Start()
     {
         base.Start();
+        lastLevel = false;
 
         // Store the boxes and their original positions to reset post destruction
-        GameObject[] allBoxes = GameObject.FindGameObjectsWithTag("Box");
-        foreach (var box in allBoxes){
-            boxes.Add(box);
-            boxPositions.Add(box.transform.position);
-        }
+        SetupBoxes();
     }
 
     public override void OnCollisionEnter(Collision collision)
@@ -124,6 +124,10 @@ public class Explode : Projectile
         }
     }
 
+    /// <summary>
+    /// If projectile collides with boxes, create an explosion
+    /// and check if it propagates to nearby boxes
+    /// </summary>
     void ExplodeNearbyBoxes()
     {
         List<GameObject> destroyedBoxes = new List<GameObject>();
@@ -146,17 +150,8 @@ public class Explode : Projectile
         }
 
         CheckWinCondition();
-        if (livesManager.currentLives >= 0){
+        if (livesManager.currentLives > 0){
             ResetProjectile();
-        }
-        else{
-            livesManager.GameOver();
-
-            // check if user wants to go again
-            bool restart = RestartGame();
-            if(restart == true){
-                Start();
-            }
         }
     }
 
@@ -169,11 +164,46 @@ public class Explode : Projectile
         {
             Debug.Log("Congrats, you've won BombsAway! Power-Up Earned :)");
             PowerUpManager.Instance.EarnPowerUp(PowerUpType.Explosion);
-            RespawnBoxes();
             livesManager.WinGame();
+            
+            StartCoroutine(TransitionToNextLevel());
+            lastLevel = true;
+            return;
+        }
+        else
+        {
+            if (livesManager.currentLives == 0 && boxes.Count > 0 && lastLevel== true)
+            {
+                livesManager.GameOver();
+            }
         }
     }
 
+    /// <summary>
+    /// Add a timer in between levels switch so boxes don't get counted accidentally and trigger a game over.
+    /// </summary>
+    IEnumerator TransitionToNextLevel()
+    {
+        yield return new WaitForSeconds(2f);
+        ResetProjectile();
+        boxes.Clear(); 
+
+        // Move to next level
+        level1Set.SetActive(false);
+        level2Set.SetActive(true);
+        SetupBoxes();
+    }
+
+    void SetupBoxes()
+    {
+     GameObject[] allBoxes = GameObject.FindGameObjectsWithTag("Box");
+        foreach (var box in allBoxes){
+            boxes.Add(box);
+            boxPositions.Add(box.transform.position);
+        }
+    }
+
+    // RESETING -----------------------------------
     /// <summary>
     /// Recreate boxes at their original positions
     /// </summary>
