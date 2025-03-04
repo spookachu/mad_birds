@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// predecessor to PlayerMovement
 public class CameraMovement : MonoBehaviour
 {
     public float moveSpeed = 5f; 
