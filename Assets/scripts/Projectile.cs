@@ -16,7 +16,6 @@ public class Projectile : MonoBehaviour
 
     // Trajectory
     public float maxDragDistance = 3f;
-    public bool isDragging = false;
     public Vector3 dragDirection;
     public LineRenderer trajectoryLine;
     public int trajectoryResolution = 30;
@@ -36,13 +35,19 @@ public class Projectile : MonoBehaviour
     {
     }
 
+
+    /// <summary>
+    /// Register launch intent and initialize it.
+    /// </summary>
     public virtual void OnMouseDown()
     {
         startPoint = transform.position;
-        isDragging = true;
         isThrown = false;
     }
 
+    /// <summary>
+    /// Display the projected trajectory based on current position.
+    /// </summary>
     public virtual void OnMouseDrag()
     {
         Vector3 dragPosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 5f));
@@ -51,12 +56,15 @@ public class Projectile : MonoBehaviour
         DrawTrajectory(transform.position, dragDirection * launchForce);
     }
 
+
+    /// <summary>
+    /// Unblock and release projectile and reinitialize trajectory.
+    /// </summary>
     public virtual void OnMouseUp()
     {
         if (!isThrown)
         {
             isThrown = true;
-            isDragging = false;
             rb.isKinematic = false;
             Launch(dragDirection * launchForce);
             trajectoryLine.positionCount = 0;;
@@ -72,7 +80,7 @@ public class Projectile : MonoBehaviour
     }
 
     /// <summary>
-    /// Draws the predicted trajectory of the projectile using physics equations.
+    /// Draws the predicted trajectory of the projectile
     /// s = s0 + v0*t + 1/2*a*t^2
     /// </summary>
     public void DrawTrajectory(Vector3 startPos, Vector3 startVelocity)
@@ -130,15 +138,5 @@ public class Projectile : MonoBehaviour
             }
         }
         ResetProjectile();
-    }
-
-    public bool RestartGame()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-            {
-                ResetProjectile(); 
-                return true;
-            }
-        return false;
     }
 }
