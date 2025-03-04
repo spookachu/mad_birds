@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; 
 
 public class MinigameBoundary : MonoBehaviour
 {
@@ -33,6 +34,11 @@ public class MinigameBoundary : MonoBehaviour
         if (isInMinigame && Input.GetKeyDown(KeyCode.Q)){
         EndMinigame();
     }
+        // Restart the scene to reset everything
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     // This method triggers when the player's collider enters the boundary collider
