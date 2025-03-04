@@ -186,7 +186,7 @@ public class Explode : Projectile
         {
             if (livesManager.currentLives == 0 && lastLevel== true)
             {
-                livesManager.GameOver();
+                //livesManager.GameOver();
             }
         }
     }
