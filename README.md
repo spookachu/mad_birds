@@ -110,6 +110,24 @@ Main controls are also always displayed on-screen.
 | Interact    | Left Click |
 | Exit Minigame | Q |
 
+## Scene management
+> Scene is split into:
+> 
+> 1. Minigame 1 (Target Practice)
+>    
+>    1. Projectile (bird)
+>    2. Set
+>    3. Camera anchor (for minigame view)
+>    4. Life Manager
+>    5. Canvas (for UI)
+> 2. Minigame 2 (Explode)
+> 3. First person controller (contains FP camera)
+> 4. Outside (environment elements)
+>    1. General scene
+>    2. Game bounds
+> 5. PowerUp Manager
+> 6. Display (for controls UI)
+
 ## Future Improvements
 - Add more minigame variations with different mechanics (more powerups, different goals,...).  
   *Ajouter des variantes de minigames avec des mécanismes différents (plus de bonus, des objectifs différents,...).*  
